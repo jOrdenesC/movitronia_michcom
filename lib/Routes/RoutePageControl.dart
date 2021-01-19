@@ -42,7 +42,7 @@ goToSessionPage() {
 }
 
 goToShowCalories() {
-  Get.toNamed(AppRoutes.showCalories.name);
+  Get.offAllNamed(AppRoutes.showCalories.name);
 }
 
 goToEvidencesSession() {

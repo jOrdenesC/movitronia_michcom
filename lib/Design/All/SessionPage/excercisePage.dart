@@ -11,6 +11,8 @@ import 'package:movitronia/Utils/Colors.dart';
 import 'package:sizer/sizer.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../Functions/Controllers/VideoController.dart';
+
 class ExcerciseVideo extends StatefulWidget {
   @override
   _ExcerciseVideoState createState() => _ExcerciseVideoState();
@@ -20,7 +22,7 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
     with TickerProviderStateMixin {
   Orientation orientation;
   //bool isPause = false;
-  WebmController webmController = Get.put(WebmController());
+  WebmController webmController = WebmController();
   @override
   void initState() {
     //TESTING
@@ -41,7 +43,9 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
   @override
   void dispose() {
     //webmController.controller.dispose();
-
+    webmController.chewieController = null;
+    webmController.chewieController.dispose();
+    webmController.videoPlayerController1 = null;
     webmController.videoPlayerController1.dispose();
     imageCache.clear();
     super.dispose();
@@ -59,7 +63,7 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
         : SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
 
     return GetX<WebmController>(
-        init: WebmController(),
+        init: webmController,
         builder: (_) {
           if (_.startgif == true) {
             @override
