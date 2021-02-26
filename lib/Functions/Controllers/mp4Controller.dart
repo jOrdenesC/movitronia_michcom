@@ -40,7 +40,6 @@ class Mp4Controller extends GetxController {
   List<dynamic> documentIds = [];
 
   List<String> exercisesAudio = [];
-  List<String> tipsAudio = [];
   List<String> macroTipsAudio = [];
 
   List<dynamic> metsList = [];
@@ -49,6 +48,8 @@ class Mp4Controller extends GetxController {
   List<dynamic> times = [];
   List<dynamic> microTime = [];
   List<dynamic> macroTime = [];
+
+  String classID;
 
   List<List<dynamic>> macroList = [];
 
@@ -78,6 +79,7 @@ class Mp4Controller extends GetxController {
   List<String> tips = [];
 
   List<String> tipsData = [];
+  List<String> tipIDs = [];
 
   String webpName = "Assets/images/C12.gif";
   var isPause = false.obs;
@@ -172,6 +174,7 @@ class Mp4Controller extends GetxController {
     int i = 0;
     print('Macro Timer Started');
     macroTip.value = tips[i];
+    playAudio(audioName[i]);
     update();
     print("TIP MACRO TIP IS ${macroTip.value}");
     timer = Timer.periodic(Duration(seconds: time), (Timer _) {
@@ -205,6 +208,13 @@ class Mp4Controller extends GetxController {
     print(tips);
   }
 
+  playTip(String documentID) async {
+    final result = await _tipsDataRepository.getTips(documentID);
+    if (result.isNotEmpty) {
+      playAudio(result[0].audioTips);
+    }
+  }
+
   playAudio(String audioName) async {
     print("Play Audio");
     if (Platform.isIOS) {
@@ -218,23 +228,23 @@ class Mp4Controller extends GetxController {
   }
 
   //Database Controller Actions
-  getData() async {
+  getData(String id) async {
     log('getting data');
     // playAudio();
-    await gettingdatabase();
+    await gettingdatabase(id);
 
     initializePlayer();
   }
 
-  gettingdatabase() async {
+  gettingdatabase(String id) async {
     //Obtain ID from external page when selecting class
     excerciseCalentamientoList.clear();
     excerciseFlexibilidadList.clear();
     excerciseDesarrolloList.clear();
     excerciseVcalmaList.clear();
 
-    final responseclass = await _classRepository
-        .getClassID("60324793ec2b1b36dc72b97d"); //Get Class Index
+    final responseclass =
+        await _classRepository.getClassID(id); //Get Class Index
     print(responseclass);
     pauses = responseclass[0].pauses;
     times = responseclass[0].macropause;
@@ -306,6 +316,7 @@ class Mp4Controller extends GetxController {
     }
 
     List<String> tipsList = [];
+    List<String> tipsID = [];
     List<dynamic> empty = ["Prepárate para el siguiente ejercicio"];
     int indexaudio = 0;
     /**Values for each macro index */
@@ -322,6 +333,7 @@ class Mp4Controller extends GetxController {
     for (int i = 0; i < responseclass[0].tips.length; i++) {
       if (responseclass[0].tips[i].toString() == "[]") {
         tipsList.add("Prepárate para el siguiente ejercicio");
+        tipsID.add("[]");
         if (i == macro1 || i == macro2 || i == macro3) {
           macroList.add(empty);
         }
@@ -335,22 +347,22 @@ class Mp4Controller extends GetxController {
           for (int i = 0; i < responseclass[0].tips[i].length; i++) {
             print("Result : ${responseclass[0].tips[i][0].toString()}");
           }
-          tipsAudio.add("[]");
+          tipsID.add("[]");
           macroTipsAudio.add("[]");
         } else {
           print("TIP Into Micro");
           final result =
               await _tipsDataRepository.getTips(responseclass[0].tips[i][0]);
           tipsList.add(result[0].tip);
+          tipsID.add(result[0].documentID);
           print("Result Audio name ${result[0].audioTips}");
-          tipsAudio.add(result[0].audioTips);
         }
       }
     }
-    print("Result Tip List ${tipsAudio}");
     print("${macroTipsAudio}");
 /**Results of Lists */
     print("TIP tipList: ${tipsList.length}");
+    print("TIP tipID: ${tipsID.length}");
     print("TIP macroList: ${macroList} ");
 /** */
     documentIds = responseclass[0].tips;
@@ -382,6 +394,7 @@ class Mp4Controller extends GetxController {
     print("MacroTime List: $macroTime MicroTime List: $microTime");
     /**Finishing it */
     tipsData = tipsList;
+    tipIDs = tipsID; //Document ID to general TipID
     videoName.value = excerciseCalentamientoList[0];
     print(videoName);
 
@@ -391,7 +404,6 @@ class Mp4Controller extends GetxController {
   controllTimer() {
     if (step <= 3) {
       if (microPause.value != true) {
-        playAudio(tipsAudio[globalindex.value]);
         microPause.value = true;
         print('microspause on');
         print("First Cycle Done");
@@ -405,6 +417,7 @@ class Mp4Controller extends GetxController {
           print("On Step Index: ${index.value}");
           print("On Step 0");
           if (index.value != excerciseCalentamientoList.length) {
+            playTip(tipIDs[globalindex.value - 1]);
             videoName.value = excerciseCalentamientoList[index.value];
             print(
                 "On Step Inside IF ${excerciseCalentamientoList[index.value]}");
@@ -427,6 +440,7 @@ class Mp4Controller extends GetxController {
           print("On Step 1");
 
           if (index.value != excerciseFlexibilidadList.length) {
+            playTip(tipIDs[globalindex.value - 1]);
             videoName.value = excerciseFlexibilidadList[index.value];
             print(
                 "On Step Inside IF ${excerciseFlexibilidadList[index.value]}");
@@ -448,6 +462,7 @@ class Mp4Controller extends GetxController {
           print("On Step 2");
 
           if (index.value != excerciseDesarrolloList.length) {
+            playTip(tipIDs[globalindex.value - 1]);
             videoName.value = excerciseDesarrolloList[index.value];
             print("On Step Inside IF ${excerciseDesarrolloList[index.value]}");
           } else {
@@ -467,6 +482,7 @@ class Mp4Controller extends GetxController {
           print("On Step 3");
 
           if (index.value != excerciseVcalmaList.length) {
+            playTip(tipIDs[globalindex.value - 1]);
             videoName.value = excerciseVcalmaList[index.value];
             print("On Step Inside IF ${excerciseVcalmaList[index.value]}");
           } else {

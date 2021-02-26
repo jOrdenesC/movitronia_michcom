@@ -306,7 +306,7 @@ class _TestinApiState extends State<TestinApi> {
               //getHttp();
               //getobjectTest();
               //downloadAllVideos();
-              goToSessionPage();
+              goToSessionPage("60324793ec2b1b36dc72b97d");
             },
             label: Text("API TEST"))
       ],
@@ -543,7 +543,7 @@ class _TestinApiState extends State<TestinApi> {
       }
 
       print(audioNames);
-      //audioDownload(audioNames, "tip");
+      audioDownload(audioNames, "tip");
       //print(indexes);
       var questions = await _questionDataRepository.getAllQuestions();
       print(questions.length);
@@ -687,8 +687,8 @@ class _TestinApiState extends State<TestinApi> {
       print(result);
     }
 
-    //await videoDownload(videos);
-    await audioDownload(audios, "exercise");
+    await videoDownload(videos);
+    //await audioDownload(audios, "exercise");
     /** Test Creating Exercise */
 
     print("Response ${response2.data[0]}");

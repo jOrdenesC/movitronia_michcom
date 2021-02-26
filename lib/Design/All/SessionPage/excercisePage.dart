@@ -11,12 +11,15 @@ import 'package:movitronia/Design/Widgets/Button.dart';
 import 'package:movitronia/Functions/Controllers/mp4Controller.dart';
 import 'package:movitronia/Routes/RoutePageControl.dart';
 import 'package:movitronia/Utils/Colors.dart';
+import 'package:orientation_helper/orientation_helper.dart';
 import 'package:sizer/sizer.dart';
 import 'package:video_player/video_player.dart';
 
 //import '../../../Functions/Controllers/VideoController.dart';
 
 class ExcerciseVideo extends StatefulWidget {
+  final String id;
+  ExcerciseVideo(this.id);
   @override
   _ExcerciseVideoState createState() => _ExcerciseVideoState();
 }
@@ -29,13 +32,14 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
 
   @override
   void initState() {
-    //TESTING
+    //
 
-    //----------------------------------------------------//
+    //----------------- -----------------------------------//
     //webmController.initializePlayer();
     imageCache.maximumSize = 0;
     mp4Controller.startTimer2();
-    mp4Controller.getData();
+
+    mp4Controller.getData(widget.id);
     //webmController.playAudio();
     //webmController.controller = GifController(vsync: this);
 
@@ -415,7 +419,7 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
                               Flexible(
                                 fit: FlexFit.loose,
                                 child: Text(
-                                  _.tipsData[_.index.value],
+                                  _.tipsData[_.globalindex.value - 1],
                                   style:
                                       TextStyle(fontSize: 2.5.h, color: blue),
                                   textAlign: TextAlign.center,
