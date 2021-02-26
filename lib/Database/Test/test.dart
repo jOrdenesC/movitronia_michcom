@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:movitronia/Database/Models/GifData.dart';
-import 'package:movitronia/Database/Repository/GifDataRepository.dart';
+import 'package:movitronia/Database/Models/ExcerciseData.dart';
+import 'package:movitronia/Database/Repository/ExcerciseRepository/ExcerciseDataRepository.dart';
 
 class HomePageTest extends StatefulWidget {
   @override
@@ -9,8 +9,8 @@ class HomePageTest extends StatefulWidget {
 }
 
 class _HomePageTestState extends State<HomePageTest> {
-  GifDataRepository _gifRepository = GetIt.I.get();
-  List<GifData> _gif = [];
+  ExcerciseDataRepository _gifRepository = GetIt.I.get();
+  List<ExcerciseData> _gif = [];
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class _HomePageTestState extends State<HomePageTest> {
           final gif = _gif[index];
           return ListTile(
             title: Text(gif.nameExcercise),
-            subtitle: Text("LimitLoop: ${gif.name}"),
+            subtitle: Text("LimitLoop: ${gif.videoName}"),
             trailing: IconButton(
               icon: Icon(Icons.delete),
               onPressed: () => _deleteCake(gif),
@@ -50,7 +50,7 @@ class _HomePageTestState extends State<HomePageTest> {
   }
 
   _loadGifs() async {
-    final gifs = await _gifRepository.getAllGif();
+    final gifs = await _gifRepository.getAllExcercise();
     setState(() => _gif = gifs);
   }
 
@@ -59,28 +59,25 @@ class _HomePageTestState extends State<HomePageTest> {
     // final name = "My amazing ${list.first} gif";
     // final nameexercise = 'Some Name';
     // final duration = Duration(milliseconds: 600);
-    final newGif = GifData(
-        name: 'C1.gif',
-        gifduration: 600,
-        hasAnim: false,
-        maxFrames: 14,
-        kiloCalories: 12,
+    final newGif = ExcerciseData(
+        videoName: 'C1.gif',
+        mets: 12,
         nameExcercise: 'SKIPPING',
         recommendation: 'NO Explotes');
-    final response = await _gifRepository.insertGif(newGif);
+    final response = await _gifRepository.insertExcercise(newGif);
     print(response);
     _loadGifs();
   }
 
-  _deleteCake(GifData gifData) async {
-    await _gifRepository.deleteGif(gifData.id);
+  _deleteCake(ExcerciseData gifData) async {
+    await _gifRepository.deleteExcercise(gifData.id);
     _loadGifs();
   }
 
-  _editCake(GifData gifData) async {
+  _editCake(ExcerciseData gifData) async {
     final updatedCake =
         gifData.copyWith(nameExcercise: gifData.nameExcercise + ' something');
-    await _gifRepository.updateGif(updatedCake);
+    await _gifRepository.updateExcercise(updatedCake);
     _loadGifs();
   }
 }

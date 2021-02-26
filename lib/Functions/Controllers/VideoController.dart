@@ -5,26 +5,28 @@ import 'dart:io';
 //import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
+
 import 'package:chewie/chewie.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_it/get_it.dart';
-import 'package:movitronia/Database/Models/GifData.dart';
-import 'package:movitronia/Database/Repository/GifDataRepository.dart';
+import 'package:movitronia/Database/Models/ExcerciseData.dart';
+import 'package:movitronia/Database/Repository/ExcerciseRepository/ExcerciseDataRepository.dart';
 import 'package:movitronia/Routes/RoutePageControl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:quiver/async.dart';
 import 'package:video_player/video_player.dart';
 
 class WebmController extends GetxController {
   //Video Controllers
   VideoPlayerController videoPlayerController1;
-  VideoPlayerController videoPlayerController2;
-  ChewieController chewieController;
+
   //AUdio Controller
   //final assetsAudioPlayer = AssetsAudioPlayer();
   //Database Variables
-  GifDataRepository _gifRepository = GetIt.I.get();
-  List<GifData> giflistdb = [];
+  ExcerciseDataRepository _gifRepository = GetIt.I.get();
+  List<ExcerciseData> giflistdb = [];
 
   //Audio Controller
   //omoi ga omoi omoi-san   / bite marks / sekimen shinaide sekime-san/ 329748 / takane no hana wa usotsuki desu/ dont cry maou chan /
@@ -39,8 +41,8 @@ class WebmController extends GetxController {
   List<int> gifID = [12, 14, 15, 16];
   // List<String> giflist = ['0.gif', '1.gif', '2.gif', '3.gif'];
   //List<String> giflist = ['0.gif', 'C1.gif', 'C2.gif', 'C3.gif'];
-  List<int> giftime = [5, 10, 6, 5, 7, 8, 5, 4, 4, 4, 4, 4];
-  List<int> giftimepause = [4, 4, 6, 5, 4, 3, 5, 5, 5, 6, 5, 4];
+  int giftime = 5;
+  int giftimepause = 5;
   List<String> tips = [
     'Tip1',
     'Tip2',
@@ -51,8 +53,27 @@ class WebmController extends GetxController {
     'Tip7',
     'Tip8',
     'Tip9',
+    'Tip10', //adding garbage
+    'Tip1',
+    'Tip2',
+    'Tip3',
+    'Tip4',
+    'Tip5',
+    'Tip6',
+    'Tip7',
+    'Tip8',
+    'Tip9',
     'Tip10',
-    ''
+    'Tip1',
+    'Tip2',
+    'Tip3',
+    'Tip4',
+    'Tip5',
+    'Tip6',
+    'Tip7',
+    'Tip8',
+    'Tip9',
+    'Tip10',
   ];
   List<String> audios = ['mario.mp3', 'fanfare.mp3'];
 
@@ -67,7 +88,29 @@ class WebmController extends GetxController {
     "LAS CUALIDADES COORDINATIVAS SON 4: AGILIDAD, RITMO, ORIENTACIÓN Y EQUILIBRIO",
     "LA ACTIVIDAD FÍSICA COMBATE EL SEDENTARISMO, ENEMIGO DE UNA BUENA SALUD",
     "TEN UNA BOTELLA CON AGUA CERCA PARA HIDRATARTE",
-    "LOS CARTÍLAGOS SON MAS BLANDOS QUE LOS HUESOS"
+    "LOS CARTÍLAGOS SON MAS BLANDOS QUE LOS HUESOS", //Adding more garbage
+    "LOS CARTÍLAGOS SON MAS BLANDOS QUE LOS HUESOS",
+    "SABÍAS QUE LOS HUESOS ESTÁN FORMADO POR CALCIO Y FÓSFORO",
+    "SABÍAS QUE EL CUERPO HUMANO DE UN ADULTO ESTA FORMADO POR 206 HUESOS",
+    "CON LA ACTIVIDAD FISICA ELEVAS TU AUTOESTIMA",
+    "SABÍAS QUE EL SUDOR ESTÁ COMPUESTO POR AGUA Y SAL",
+    "LAS CAPACIDADES FÍSICAS BÁSICAS SON LA RESISTENCIA, VELOCIDAD, FUERZA Y FLEXIBILIDAD",
+    "SABIAS QUE MAS DE LA MITAD DEL PESO DE TU CUERPO ESTA FORMADO POR AGUA",
+    "LAS CUALIDADES COORDINATIVAS SON 4: AGILIDAD, RITMO, ORIENTACIÓN Y EQUILIBRIO",
+    "LA ACTIVIDAD FÍSICA COMBATE EL SEDENTARISMO, ENEMIGO DE UNA BUENA SALUD",
+    "TEN UNA BOTELLA CON AGUA CERCA PARA HIDRATARTE",
+    "LOS CARTÍLAGOS SON MAS BLANDOS QUE LOS HUESOS",
+    "LOS CARTÍLAGOS SON MAS BLANDOS QUE LOS HUESOS",
+    "SABÍAS QUE LOS HUESOS ESTÁN FORMADO POR CALCIO Y FÓSFORO",
+    "SABÍAS QUE EL CUERPO HUMANO DE UN ADULTO ESTA FORMADO POR 206 HUESOS",
+    "CON LA ACTIVIDAD FISICA ELEVAS TU AUTOESTIMA",
+    "SABÍAS QUE EL SUDOR ESTÁ COMPUESTO POR AGUA Y SAL",
+    "LAS CAPACIDADES FÍSICAS BÁSICAS SON LA RESISTENCIA, VELOCIDAD, FUERZA Y FLEXIBILIDAD",
+    "SABIAS QUE MAS DE LA MITAD DEL PESO DE TU CUERPO ESTA FORMADO POR AGUA",
+    "LAS CUALIDADES COORDINATIVAS SON 4: AGILIDAD, RITMO, ORIENTACIÓN Y EQUILIBRIO",
+    "LA ACTIVIDAD FÍSICA COMBATE EL SEDENTARISMO, ENEMIGO DE UNA BUENA SALUD",
+    "TEN UNA BOTELLA CON AGUA CERCA PARA HIDRATARTE",
+    "LOS CARTÍLAGOS SON MAS BLANDOS QUE LOS HUESOS",
   ];
   int precacheindex = 0;
   double amountofLoops = 0;
@@ -97,17 +140,21 @@ class WebmController extends GetxController {
 
   Future<void> initializePlayer() async {
     videoPlayerController1 = VideoPlayerController.asset(
-        'Assets/videos/${giflistdb[index.value].name}.webm');
+        'Assets/videos/${giflistdb[index.value].videoName}.webm');
+    //TODO
 
-    await videoPlayerController1.initialize();
+    await videoPlayerController1
+      ..initialize().then((value) => null)
+      ..setLooping(true)
+      ..play();
 
     videoPlayerController1.obs;
 
-    final chewieController = ChewieController(
+    /*  final chewieController = ChewieController(
       videoPlayerController: videoPlayerController1,
       autoPlay: true,
       looping: true,
-    );
+    );*/
   }
 
   togglepause() {
@@ -175,7 +222,28 @@ class WebmController extends GetxController {
   }
 
   _loadGifs() async {
+    //TODO Implement a copy of the same excercises twice to see memory load on device
     final gifs = await _gifRepository.loopSearch([
+      12,
+      7,
+      9,
+      6,
+      8,
+      5,
+      4,
+      8,
+      13,
+      11, //added shit
+      12,
+      7,
+      9,
+      6,
+      8,
+      5,
+      4,
+      8,
+      13,
+      11,
       12,
       7,
       9,
@@ -226,6 +294,7 @@ class WebmController extends GetxController {
           //webpName = "Assets/${giflistdb[index.value].name}.webm'}";
           // videoPlayerController1 = VideoPlayerController.asset(webpName);
           updateController();
+          //_onControllerChange();
         }
       }
     }
@@ -234,38 +303,54 @@ class WebmController extends GetxController {
       controllerCountDown.restart(duration: returnTimer());
     }
 
-    chewieController = ChewieController(
-      videoPlayerController: videoPlayerController1,
-      autoPlay: true,
-      looping: true,
-      showControls: false,
-    );
     //controller3.stop();
   }
 
-  updatenextController() {
-    videoPlayerController2 = VideoPlayerController.asset(
-        'Assets/videos/${giflistdb[index.value + 1].name}.webm');
-  }
+  updateController() async {
+    //Remove Video Controller and reload video
 
-  updateController() {
+    videoPlayerController1.dispose();
     videoPlayerController1 = VideoPlayerController.asset(
-        'Assets/videos/${giflistdb[index.value].name}.webm');
-
-    /*
-    if (microPause.value == true) {
-      print("Update controller 1 on micropause");
-      videoPlayerController1 = VideoPlayerController.asset(
-          'Assets/${giflistdb[index.value].name}.webm');
-    } else {
-      print("Update controller 2 on micropause");
-      videoPlayerController2 = VideoPlayerController.asset(
-          'Assets/${giflistdb[index.value].name}.webm');
-    }*/
-
-    //await videoPlayerController1.initialize();
+        'Assets/videos/${giflistdb[index.value].videoName}.webm')
+      ..setLooping(true)
+      ..initialize().then((value) => null)
+      ..play();
 
     update();
+  }
+
+  void _initController() {
+    videoPlayerController1 = VideoPlayerController.asset(
+        'Assets/videos/${giflistdb[index.value].videoName}.webm')
+      ..initialize().then((_) {
+        update();
+      })
+      ..setLooping(true)
+      ..play();
+  }
+
+  Future<void> _onControllerChange() async {
+    if (videoPlayerController1 == null) {
+      // If there was no controller, just create a new one
+      _initController();
+    } else {
+      // If there was a controller, we need to dispose of the old one first
+      final oldController = videoPlayerController1;
+
+      // Registering a callback for the end of next frame
+      // to dispose of an old controller
+      // (which won't be used anymore after calling setState)
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await oldController.dispose();
+
+        // Initing new controller
+        _initController();
+      });
+
+      // Making sure that controller is not used by setting it to null
+
+      videoPlayerController1 = null;
+    }
   }
 
   pauseController() {
@@ -279,13 +364,13 @@ class WebmController extends GetxController {
   }
 
   int returnTimer() {
-    List<int> returned;
+    int returned;
     if (microPause.value == true) {
       returned = giftimepause;
     } else {
       returned = giftime;
     }
-    print('Value of Returned ' + returned[index.value].toString());
-    return returned[index.value].toInt();
+
+    return returned;
   }
 }

@@ -1,11 +1,17 @@
 import 'package:get_it/get_it.dart';
+import 'package:movitronia/Database/Repository/ClassLevelRepository/ClassDataRepository.dart';
+import 'package:movitronia/Database/Repository/ClassLevelRepository/sembast_classlevel.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 
-import 'Repository/GifDataRepository.dart';
-import 'Repository/sembast_gifdata.dart';
+import 'Repository/ExcerciseRepository/ExcerciseDataRepository.dart';
+import 'Repository/ExcerciseRepository/sembast_excercisedata.dart';
+import 'Repository/QuestionDataRepository/QuestionDataRepository.dart';
+import 'Repository/QuestionDataRepository/sembast_questiondata.dart';
+import 'Repository/TipsDataRepository/TipsDataRepository.dart';
+import 'Repository/TipsDataRepository/sembast_tipsdata.dart';
 
 class Init {
   static Future initialize() async {
@@ -22,7 +28,16 @@ class Init {
   }
 
   static _registerRepositories() {
-    GetIt.I.registerLazySingleton<GifDataRepository>(
-        () => SembastGifDataRepository());
+    GetIt.I.registerLazySingleton<ExcerciseDataRepository>(
+        () => SembastExcerciseDataRepository());
+
+    GetIt.I.registerLazySingleton<ClassDataRepository>(
+        () => SembastClassDataRepository());
+
+    GetIt.I.registerLazySingleton<QuestionDataRepository>(
+        () => SembastQuestionDataRepository());
+
+    GetIt.I.registerLazySingleton<TipsDataRepository>(
+        () => SembastTipsDataRepository());
   }
 }

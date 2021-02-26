@@ -8,6 +8,8 @@ import 'package:movitronia/Utils/Colors.dart';
 import 'package:orientation_helper/orientation_helper.dart';
 import 'package:sizer/sizer.dart';
 
+import 'package:video_thumbnail/video_thumbnail.dart';
+
 class ExcercisesPage extends StatefulWidget {
   @override
   _ExcercisesPageState createState() => _ExcercisesPageState();
@@ -108,7 +110,7 @@ class _ExcercisesPageState extends State<ExcercisesPage>
                         onTap: () {
                           goToDetailsExcercises(
                               "FILA DE AIRE",
-                              "Assets/images/C12.gif",
+                              "Assets/videos/C12",
                               "13",
                               "10",
                               "Mantén la espalda erguida. Contrae el abdomen y los glúteos. No encojas los hombros. Junta las escapulas.");
@@ -116,7 +118,8 @@ class _ExcercisesPageState extends State<ExcercisesPage>
                         child: Container(
                           color: Colors.white,
                           width: w,
-                          child: Image.asset("Assets/images/C12.gif"),
+                          child:
+                              Image.asset("Assets/images/thumbnails/C12T.jpg"),
                         ),
                       ),
                       Text(""),
@@ -135,7 +138,7 @@ class _ExcercisesPageState extends State<ExcercisesPage>
                         onTap: () {
                           goToDetailsExcercises(
                               "LOW RUNNER",
-                              "Assets/images/C7.gif",
+                              "Assets/videos/C7",
                               "12",
                               "10",
                               "Mantén la espalda erguida. Flecta un poco las rodillas. No te inclines hacia adelante. Contrae el abdomen.");
@@ -143,7 +146,8 @@ class _ExcercisesPageState extends State<ExcercisesPage>
                         child: Container(
                           color: Colors.white,
                           width: w,
-                          child: Image.asset("Assets/images/C7.gif"),
+                          child:
+                              Image.asset("Assets/images/thumbnails/C7T.jpg"),
                         ),
                       ),
                       Text(""),
@@ -389,7 +393,6 @@ class _ExcercisesPageState extends State<ExcercisesPage>
                                   "15",
                                   "8",
                                   "Inclínate hacia adelante formando un ángulo recto a la altura de la cadera. Mantén la espalda erguida. Junta los pies. Debes notar el estiramiento del muslo interno.");
-
                             },
                             child: Container(
                                 child: Image.asset("Assets/images/C11.gif"),

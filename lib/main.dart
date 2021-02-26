@@ -2,13 +2,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:movitronia/Design/testing.dart';
 import 'package:orientation_helper/orientation_helper.dart';
 import 'package:sizer/sizer_util.dart';
 import 'Database/init.dart';
 import 'Design/All/splash/splash.dart';
 import 'Routes/AppRoutes.dart';
 import 'Utils/Colors.dart';
-
 
 void main() async {
   await GetStorage.init();
@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
               future: _init,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  return Splash();
+                  return TestinApi(); //Splash();
                 } else {
                   return Material(
                     child: Center(

@@ -10,6 +10,7 @@ import 'package:movitronia/Functions/Controllers/videoRecorderController.dart';
 import 'package:movitronia/Routes/RoutePageControl.dart';
 import 'package:movitronia/Utils/Colors.dart';
 import 'package:sizer/sizer.dart';
+import 'package:video_player/video_player.dart';
 
 class VideosToRecord extends StatefulWidget {
   @override
@@ -18,17 +19,13 @@ class VideosToRecord extends StatefulWidget {
 
 class _VideosToRecordState extends State<VideosToRecord>
     with TickerProviderStateMixin {
-  GifController controller3;
-  GifController controllerActividad1;
-  GifController controllerActividad2;
-  VideoController videoController = Get.put(VideoController());
+  VideoController videoController = VideoController();
   String gifName = "Assets/images/C1.gif";
   String gifName2 = "Assets/images/C2.gif";
   @override
   void initState() {
-    controller3 = GifController(vsync: this);
-    controllerActividad1 = GifController(vsync: this);
-    controllerActividad2 = GifController(vsync: this);
+    videoController.initializePlayer();
+
     super.initState();
   }
 
@@ -40,24 +37,8 @@ class _VideosToRecordState extends State<VideosToRecord>
     //Obx(() => Text(videoController.gifName.value)),
     //This initialize the controller and allow us to build objects observing changes on the
     return GetX<VideoController>(
-      init: VideoController(),
+      init: videoController,
       builder: (_) {
-        controllerActividad1.repeat(
-            min: 0,
-            max: _.gifframes[1],
-            period: _.gifduration[1],
-            reverse: false);
-        controllerActividad2.repeat(
-            min: 0,
-            max: _.gifframes[2],
-            period: _.gifduration[2],
-            reverse: false);
-        controller3.repeat(
-            min: 0,
-            max: _.gifframes[_.index.toInt()],
-            period: _.gifduration[_.index.toInt()],
-            reverse: false);
-
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
@@ -193,11 +174,8 @@ class _VideosToRecordState extends State<VideosToRecord>
                                     decoration: BoxDecoration(
                                         border: Border.all(
                                             color: red, width: 1.0.w)),
-                                    child: Image.asset(
-                                      gifName,
-                                      width: 100.0.w,
-                                      fit: BoxFit.fill,
-                                    ),
+                                    child:
+                                        VideoPlayer(_.videoPlayerController1),
                                     width: 50.0.w,
                                     height: 15.0.h,
                                   )
@@ -247,11 +225,8 @@ class _VideosToRecordState extends State<VideosToRecord>
                                     decoration: BoxDecoration(
                                         border: Border.all(
                                             color: red, width: 1.0.w)),
-                                    child: Image.asset(
-                                      gifName2,
-                                      width: 100.0.w,
-                                      fit: BoxFit.fill,
-                                    ),
+                                    child:
+                                        VideoPlayer(_.videoPlayerController2),
                                     width: 50.0.w,
                                     height: 15.0.h,
                                   )
@@ -310,9 +285,9 @@ class _VideosToRecordState extends State<VideosToRecord>
 
   @override
   void dispose() {
-    controllerActividad1.dispose();
-    controllerActividad2.dispose();
-    controller3.dispose();
+    videoController.videoPlayerController1.dispose();
+    videoController.videoPlayerController2.dispose();
+
     super.dispose();
   }
 }

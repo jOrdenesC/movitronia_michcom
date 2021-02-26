@@ -1,17 +1,20 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:get/get.dart';
 import 'package:movitronia/Design/Widgets/Button.dart';
-import 'package:movitronia/Functions/Controllers/VideoController.dart';
+//import 'package:movitronia/Functions/Controllers/VideoController.dart';
+import 'package:movitronia/Functions/Controllers/mp4Controller.dart';
 import 'package:movitronia/Routes/RoutePageControl.dart';
 import 'package:movitronia/Utils/Colors.dart';
 import 'package:sizer/sizer.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../../Functions/Controllers/VideoController.dart';
+//import '../../../Functions/Controllers/VideoController.dart';
 
 class ExcerciseVideo extends StatefulWidget {
   @override
@@ -22,7 +25,8 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
     with TickerProviderStateMixin {
   Orientation orientation;
   //bool isPause = false;
-  WebmController webmController = WebmController();
+  Mp4Controller mp4Controller = Mp4Controller();
+
   @override
   void initState() {
     //TESTING
@@ -30,8 +34,8 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
     //----------------------------------------------------//
     //webmController.initializePlayer();
     imageCache.maximumSize = 0;
-    webmController.startTimer2();
-    webmController.getData();
+    mp4Controller.startTimer2();
+    mp4Controller.getData();
     //webmController.playAudio();
     //webmController.controller = GifController(vsync: this);
 
@@ -43,10 +47,9 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
   @override
   void dispose() {
     //webmController.controller.dispose();
-    webmController.chewieController = null;
-    webmController.chewieController.dispose();
-    webmController.videoPlayerController1 = null;
-    webmController.videoPlayerController1.dispose();
+    mp4Controller.timer?.cancel();
+    mp4Controller.videoPlayerController1 = null;
+    mp4Controller.videoPlayerController1.dispose();
     imageCache.clear();
     super.dispose();
   }
@@ -62,8 +65,8 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
         ? SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom])
         : SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
 
-    return GetX<WebmController>(
-        init: webmController,
+    return GetX<Mp4Controller>(
+        init: mp4Controller,
         builder: (_) {
           if (_.startgif == true) {
             @override
@@ -172,7 +175,7 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
         });
   }
 
-  Widget pauseLandscape(WebmController _) {
+  Widget pauseLandscape(Mp4Controller _) {
     return Stack(
       children: [
         Column(
@@ -239,7 +242,7 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    _.tips[_.index.value],
+                                    _.tips[_.globalindex.value],
                                     style: TextStyle(
                                       fontSize: 5.9.w,
                                       color: blue,
@@ -249,7 +252,7 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
                               ),
                               Text(""),
                               Text(
-                                _.tipsData[_.index.value],
+                                _.tipsData[_.globalindex.value],
                                 style: TextStyle(fontSize: 2.9.h, color: blue),
                               )
                             ],
@@ -282,7 +285,7 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
                         height: 15.0.h,
                       ),
                       Text(
-                        "SIGUIENTE EJERCICIO",
+                        "${_.excerciseNames[_.globalindex.value]}",
                         style: TextStyle(color: Colors.white, fontSize: 5.0.w),
                       ),
                       circTimer(_)
@@ -297,7 +300,7 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
     );
   }
 
-  Widget pausePortrait(WebmController _) {
+  Widget pausePortrait(Mp4Controller _) {
     return Stack(
       children: [
         Column(
@@ -342,7 +345,7 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
                         height: 15.0.h,
                       ),
                       Text(
-                        "SIGUIENTE EJERCICIO",
+                        "${_.excerciseNames[_.globalindex.value]}",
                         style: TextStyle(color: Colors.white, fontSize: 5.0.w),
                       )
                     ],
@@ -393,13 +396,13 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
                               SizedBox(
                                 width: 10.0.w,
                               ),
-                              Text(
+                              /*Text(
                                 _.tips[_.index.value],
                                 style: TextStyle(
                                   fontSize: 6.0.w,
                                   color: blue,
                                 ),
-                              )
+                              )*/
                             ],
                           ),
                           Text(""),
@@ -434,7 +437,7 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
     );
   }
 
-  Widget landscapeDesign(WebmController _) {
+  Widget landscapeDesign(Mp4Controller _) {
     var w = MediaQuery.of(context).size.width;
     return Row(
       children: [
@@ -517,7 +520,7 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
     );
   }
 
-  Widget portraitDesign(WebmController _) {
+  Widget portraitDesign(Mp4Controller _) {
     var w = MediaQuery.of(context).size.width;
     return Column(
       children: [
@@ -580,7 +583,7 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
     );
   }
 
-  Widget macroPausePortrait(WebmController _) {
+  Widget macroPausePortrait(Mp4Controller _) {
     return Stack(
       children: [
         circTimer(_),
@@ -637,14 +640,12 @@ class _ExcerciseVideoState extends State<ExcerciseVideo>
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             SizedBox(width: 7.0.w),
-                            Text(
-                              """Los huesos están
-formados por calcio
-y fósforo """,
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 7.0.w),
-                              textAlign: TextAlign.center,
-                            ),
+                            Obx(() => Text(
+                                  "${mp4Controller.macroTip}",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 7.0.w),
+                                  textAlign: TextAlign.center,
+                                ))
                           ],
                         )
                       ],
@@ -700,7 +701,7 @@ y fósforo """,
     );
   }
 
-  Widget macroPauseLandscape(WebmController _) {
+  Widget macroPauseLandscape(Mp4Controller _) {
     return Stack(
       children: [
         Container(
@@ -851,15 +852,15 @@ y fósforo """,
     );
   }
 
-  Widget webpVideo(WebmController _) {
+  Widget webpVideo(Mp4Controller _) {
     return Stack(
       children: <Widget>[
         ColorFiltered(
           colorFilter: _.microPause.value == true
               ? ColorFilter.mode(Colors.grey, BlendMode.saturation)
               : ColorFilter.mode(Colors.transparent, BlendMode.multiply),
-          child: VideoPlayer(
-              _.videoPlayerController1) //Chewie(controller: _.chewieController)
+          child: VideoPlayer(_.videoPlayerController1)
+          //Chewie(controller: _.chewieController)
           /* GifImage(
             fit: BoxFit.fill,
             width: MediaQuery.of(context).size.width,
@@ -906,7 +907,7 @@ y fósforo """,
         ),
         Center(
           child: Text(
-            "Prepárate \n${webmController.startcounter}",
+            "Prepárate \n${mp4Controller.startcounter}",
             style: TextStyle(
               fontSize: 30,
               color: Colors.white,
@@ -959,7 +960,7 @@ y fósforo """,
               Container(
                 child: Center(
                     child: Text(
-                  "Prepárate \n${webmController.startcounter}",
+                  "Prepárate \n${mp4Controller.startcounter}",
                   style: TextStyle(color: blue, fontSize: 6.0.h),
                   textAlign: TextAlign.center,
                 )),
@@ -1010,7 +1011,7 @@ y fósforo """,
                       Container(
                         child: Center(
                             child: Text(
-                          "Prepárate \n${webmController.startcounter}",
+                          "Prepárate \n${mp4Controller.startcounter}",
                           style: TextStyle(color: blue, fontSize: 6.0.h),
                           textAlign: TextAlign.center,
                         )),
@@ -1048,11 +1049,10 @@ y fósforo """,
     );
   }
 
-  Widget circTimer(WebmController _) {
+  Widget circTimer(Mp4Controller _) {
     return InkWell(
       onTap: () {
         _.controllerCountDown.resume();
-        _.playAudio();
       },
       child: CircularCountDownTimer(
         key: ValueKey(2),
@@ -1078,7 +1078,7 @@ y fósforo """,
     );
   }
 
-  Widget circTimerDemostration(WebmController _) {
+  Widget circTimerDemostration(Mp4Controller _) {
     return InkWell(
       onTap: () {
         _.controllerDemostration.pause();
@@ -1103,12 +1103,13 @@ y fósforo """,
         width: MediaQuery.of(context).size.width / 2.5,
         onComplete: () {
           _.demonstration.value = false;
+          _.playAudio(_.exercisesAudio[_.globalindex.value]);
         },
       ),
     );
   }
 
-  Widget demostrationExcercisePortrait(WebmController _) {
+  Widget demostrationExcercisePortrait(Mp4Controller _) {
     return Container(
       color: Colors.white,
       child: Stack(
@@ -1173,7 +1174,7 @@ y fósforo """,
     );
   }
 
-  Widget demostrationExcerciseLandscape(WebmController _) {
+  Widget demostrationExcerciseLandscape(Mp4Controller _) {
     return Container(
       color: Colors.white,
       child: Stack(

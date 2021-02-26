@@ -6,6 +6,7 @@ import 'package:flutter_gifimage/flutter_gifimage.dart';
 import 'package:get/state_manager.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_compress/video_compress.dart';
+import 'package:video_player/video_player.dart';
 
 class VideoController extends GetxController {
   @override
@@ -14,14 +15,9 @@ class VideoController extends GetxController {
     super.onInit();
   }
 
-  GifController controller3;
-  List<double> gifframes = [0, 14, 45, 33];
-  List<Duration> gifduration = [
-    Duration(milliseconds: 200),
-    Duration(milliseconds: 850),
-    Duration(milliseconds: 2200),
-    Duration(milliseconds: 2230)
-  ];
+  VideoPlayerController videoPlayerController1;
+  VideoPlayerController videoPlayerController2;
+
   var loading = false.obs;
   var gifName2 = 'Assets/images/C1.gif'.obs;
   var index = 0.obs;
@@ -31,6 +27,25 @@ class VideoController extends GetxController {
   changeValue(int indexValue) {
     gifName2.value = assetFolder + giflist[indexValue];
     index.value = indexValue;
+  }
+
+  Future<void> initializePlayer() async {
+    videoPlayerController1 = VideoPlayerController.asset(
+        'Assets/videos/C3.webm',
+        videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true));
+    videoPlayerController2 = VideoPlayerController.asset(
+        'Assets/videos/C4.webm',
+        videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true));
+
+    videoPlayerController1
+      ..setLooping(true)
+      ..initialize().then((value) => null)
+      ..play();
+
+    videoPlayerController2
+      ..setLooping(true)
+      ..initialize().then((value) => null)
+      ..play();
   }
 
   //Observe changes done to variable and return different controller??

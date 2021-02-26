@@ -562,7 +562,7 @@ class _AddExcercisesState extends State<AddExcercises> {
                           Image(
                             width: 100.0.w,
                             fit: BoxFit.fill,
-                            image: AssetImage('$asset'),
+                            image: AssetImage('$asset'), //TODO Add Thumbnail
                           ),
                         ],
                       ),

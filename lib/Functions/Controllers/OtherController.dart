@@ -7,16 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gifimage/flutter_gifimage.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_it/get_it.dart';
-import 'package:movitronia/Database/Models/GifData.dart';
-import 'package:movitronia/Database/Repository/GifDataRepository.dart';
+import 'package:movitronia/Database/Models/ExcerciseData.dart';
+import 'package:movitronia/Database/Repository/ExcerciseRepository/ExcerciseDataRepository.dart';
 import 'package:movitronia/Database/Test/data.dart';
 import 'package:movitronia/Routes/RoutePageControl.dart';
 import 'package:quiver/async.dart';
 
 class OtherController extends GetxController {
   //Database Variables
-  GifDataRepository _gifRepository = GetIt.I.get();
-  List<GifData> giflistdb = [];
+  ExcerciseDataRepository _gifRepository = GetIt.I.get();
+  List<ExcerciseData> giflistdb = [];
   ValueKey keyCountdown;
   ValueKey keyDemonstration;
   GifController controller;
@@ -84,24 +84,24 @@ class OtherController extends GetxController {
 
   precache() {
     for (var i = 1; i < giflistdb.length; i++) {
-      fetchGif(AssetImage('Assets/images/' + giflistdb[i].name));
+      fetchGif(AssetImage('Assets/images/' + giflistdb[i].videoName));
     }
   }
 
   insertData() async {
-    await _gifRepository.insertGif(gifdata);
-    await _gifRepository.insertGif(gifdata2);
-    await _gifRepository.insertGif(gifdata3);
-    await _gifRepository.insertGif(gifdata4);
-    await _gifRepository.insertGif(gifdata5);
-    await _gifRepository.insertGif(gifdata6);
-    await _gifRepository.insertGif(gifdata7);
-    await _gifRepository.insertGif(gifdata8);
-    await _gifRepository.insertGif(gifdata9);
-    await _gifRepository.insertGif(gifdata10);
-    await _gifRepository.insertGif(gifdata11);
-    await _gifRepository.insertGif(gifdata12);
-    await _gifRepository.insertGif(gifdata13);
+    await _gifRepository.insertExcercise(gifdata);
+    await _gifRepository.insertExcercise(gifdata2);
+    await _gifRepository.insertExcercise(gifdata3);
+    await _gifRepository.insertExcercise(gifdata4);
+    await _gifRepository.insertExcercise(gifdata5);
+    await _gifRepository.insertExcercise(gifdata6);
+    await _gifRepository.insertExcercise(gifdata7);
+    await _gifRepository.insertExcercise(gifdata8);
+    await _gifRepository.insertExcercise(gifdata9);
+    await _gifRepository.insertExcercise(gifdata10);
+    await _gifRepository.insertExcercise(gifdata11);
+    await _gifRepository.insertExcercise(gifdata12);
+    await _gifRepository.insertExcercise(gifdata13);
   }
 
   precacheTest() {
@@ -109,7 +109,8 @@ class OtherController extends GetxController {
       if (precacheindex < giflistdb.length) {
         PaintingBinding.instance.imageCache.clear();
         PaintingBinding.instance.imageCache.clearLiveImages();
-        fetchGif(AssetImage('Assets/images/' + giflistdb[precacheindex].name));
+        fetchGif(
+            AssetImage('Assets/images/' + giflistdb[precacheindex].videoName));
 
         precacheindex++;
       }
@@ -227,13 +228,7 @@ class OtherController extends GetxController {
             controllerCenter.stop();
           });
         } else {
-          gifName = "Assets/images/${giflistdb[index.value].name}";
-          controller.repeat(
-              min: 0,
-              max: giflistdb[index.value].maxFrames.toDouble(),
-              period: Duration(
-                  milliseconds: giflistdb[index.toInt()].gifduration.toInt()),
-              reverse: false);
+          gifName = "Assets/images/${giflistdb[index.value].videoName}";
         }
       }
     }
@@ -245,14 +240,6 @@ class OtherController extends GetxController {
   }
 
   pauseController() {
-    controller.repeat(
-        min: 0,
-        max: giflistdb[index.value]
-            .maxFrames
-            .toDouble(), //_.gifframes[_.index.toInt()],
-        period: Duration(
-            milliseconds: giflistdb[index.toInt()].gifduration.toInt()),
-        reverse: false);
     if (isPause.value) {
       controllerCountDown.resume();
       togglepause();
